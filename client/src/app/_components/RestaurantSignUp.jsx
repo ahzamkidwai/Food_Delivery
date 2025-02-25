@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 
 const RestaurantSignUp = () => {
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center bg-gray-100">
       <div className="border-2 border-gray-300 p-6 rounded-lg shadow-lg bg-white w-96">
         <h2 className="text-xl font-bold text-center mb-4">
           Restaurant Signup
