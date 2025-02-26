@@ -59,6 +59,7 @@ const fields = [
 const RestaurantSignUp = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [errors, setErrors] = useState({});
+  const [registerLoading, setRegisterLoading] = useState(false);
 
   const validateForm = () => {
     let newErrors = {};
@@ -77,10 +78,41 @@ const RestaurantSignUp = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form submitted successfully:", state);
+      try {
+        setRegisterLoading(true);
+        const userData = {
+          email: state.email,
+          password: state.password,
+          restaurantName: state.restaurantName,
+          city: state.city,
+          address: state.address,
+          contactNumber: state.contactNumber,
+        };
+
+        console.log("we are here userdata ke baad : ", userData);
+
+        const response = await fetch("http://localhost:3000/api/restaurant", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        console.log("Response Data is:", responseData);
+        console.log("Form submitted successfully:", state);
+        setRegisterLoading(false);
+      } catch (error) {
+        console.error("Error submitting form:", error.message);
+      }
     }
   };
 
@@ -111,9 +143,40 @@ const RestaurantSignUp = () => {
           <div className="mt-4">
             <Button
               type="submit"
-              className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition"
+              className={`w-full text-white font-semibold py-2 rounded-lg transition ${
+                registerLoading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-600"
+              }`}
+              disabled={registerLoading}
             >
-              Register
+              {registerLoading ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    ></path>
+                  </svg>
+                  Processing...
+                </>
+              ) : (
+                "Register"
+              )}
             </Button>
           </div>
         </form>
