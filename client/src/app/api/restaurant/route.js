@@ -19,7 +19,7 @@ export async function GET() {
 
     return NextResponse.json({
       result: true,
-      message: "Database connection successful",
+
       data,
     });
   } catch (error) {
