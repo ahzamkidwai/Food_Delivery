@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const initialState = {
+  name: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -17,6 +18,12 @@ const reducer = (state, action) => {
 };
 
 const fields = [
+  {
+    name: "name",
+    type: "text",
+    label: "Name",
+    placeholder: "Enter your name",
+  },
   {
     name: "email",
     type: "email",
@@ -63,6 +70,7 @@ const RestaurantSignUp = () => {
 
   const validateForm = () => {
     let newErrors = {};
+    if (!state.name.trim()) newErrors.name = "Name is required";
     if (!state.email.includes("@")) newErrors.email = "Invalid email address";
     if (state.password.length < 6)
       newErrors.password = "Password must be at least 6 characters";
@@ -84,6 +92,7 @@ const RestaurantSignUp = () => {
       try {
         setRegisterLoading(true);
         const userData = {
+          name: state.name,
           email: state.email,
           password: state.password,
           restaurantName: state.restaurantName,
@@ -92,7 +101,7 @@ const RestaurantSignUp = () => {
           contactNumber: state.contactNumber,
         };
 
-        console.log("we are here userdata ke baad : ", userData);
+        console.log("User Data before sending request:", userData);
 
         const response = await fetch("http://localhost:3000/api/restaurant", {
           method: "POST",
@@ -112,6 +121,7 @@ const RestaurantSignUp = () => {
         setRegisterLoading(false);
       } catch (error) {
         console.error("Error submitting form:", error.message);
+        setRegisterLoading(false);
       }
     }
   };
