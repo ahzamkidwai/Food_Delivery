@@ -13,8 +13,14 @@ const restaurantSignUpSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const RestaurantSignUpModel =
-  mongoose.models.RestaurantSignUpModel ||
-  mongoose.model("RestaurantSignUpModel", restaurantSignUpSchema);
+// const RestaurantSignUpModel =
+//   mongoose.models.RestaurantSignUpModel ||
+//   mongoose.model("RestaurantSignUpModel", restaurantSignUpSchema);
 
-export default RestaurantSignUpModel;
+// export default RestaurantSignUpModel;
+
+const RestaurantSignUp =
+  mongoose.models.RestaurantSignUp ||
+  mongoose.model("RestaurantSignUp", restaurantSignUpSchema);
+
+export default RestaurantSignUp;

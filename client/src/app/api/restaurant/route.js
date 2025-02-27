@@ -1,6 +1,6 @@
 import { MONGODB_URI } from "@/app/lib/config/db";
 import Restaurant from "@/app/lib/models/restaurantModel";
-import RestaurantSignUpModel from "@/app/lib/models/restaurantSignUpModel";
+import RestaurantSignUp from "@/app/lib/models/restaurantSignUpModel";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
@@ -41,8 +41,8 @@ export async function POST(request) {
     }
     const payload = await request.json();
     console.log("POST Request Payload:", payload);
-    const newRestaurant = await RestaurantSignUpModel.create(payload);
-
+    const newRestaurant = await RestaurantSignUp.create(payload);
+    // await newRestaurant.save();
     return NextResponse.json(
       {
         success: true,

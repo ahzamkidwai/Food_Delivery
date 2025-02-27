@@ -1,6 +1,9 @@
 import { useReducer, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { hashPassword } from "../lib/utils/hashing";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 const initialState = {
   name: "",
@@ -67,6 +70,7 @@ const RestaurantSignUp = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [errors, setErrors] = useState({});
   const [registerLoading, setRegisterLoading] = useState(false);
+  const [showAlertMessage, setShowAlertMessage] = useState(null);
 
   const validateForm = () => {
     let newErrors = {};
@@ -91,17 +95,17 @@ const RestaurantSignUp = () => {
     if (validateForm()) {
       try {
         setRegisterLoading(true);
+        let enteredPassword = state.password;
+        const hashedPassword = await hashPassword(enteredPassword);
         const userData = {
           name: state.name,
           email: state.email,
-          password: state.password,
+          password: hashedPassword,
           restaurantName: state.restaurantName,
           city: state.city,
           address: state.address,
           contactNumber: state.contactNumber,
         };
-
-        console.log("User Data before sending request:", userData);
 
         const response = await fetch("http://localhost:3000/api/restaurant", {
           method: "POST",
@@ -119,9 +123,29 @@ const RestaurantSignUp = () => {
         console.log("Response Data is:", responseData);
         console.log("Form submitted successfully:", state);
         setRegisterLoading(false);
+        setShowAlertMessage({
+          type: "success",
+          title: "REGISTRATION SUCCESSFULL",
+          message: "Registration Successfull. You can login now.",
+        });
+        // toast({
+        //   title: "Success",
+        //   description: "Registration successful!",
+        //   variant: "default",
+        // });
       } catch (error) {
         console.error("Error submitting form:", error.message);
         setRegisterLoading(false);
+        setShowAlertMessage({
+          type: "error",
+          title: "REGISTRATION FAILED",
+          message: error.message,
+        });
+        // toast({
+        //   title: "Error",
+        //   description: error.message || "Something went wrong.",
+        //   variant: "destructive",
+        // });
       }
     }
   };
@@ -182,12 +206,31 @@ const RestaurantSignUp = () => {
                       d="M4 12a8 8 0 018-8v8H4z"
                     ></path>
                   </svg>
-                  Processing...
+                  {/* Processing... */}
                 </>
               ) : (
                 "Register"
               )}
             </Button>
+            <div className="mt-4">
+              {showAlertMessage && (
+                <Alert
+                  variant={
+                    showAlertMessage.type === "error"
+                      ? "destructive"
+                      : "default"
+                  }
+                >
+                  {showAlertMessage.type === "error" && (
+                    <AlertCircle className="h-4 w-4" />
+                  )}
+                  <AlertTitle>{showAlertMessage.title}</AlertTitle>
+                  <AlertDescription>
+                    {showAlertMessage.message}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
           </div>
         </form>
       </div>
