@@ -4,67 +4,11 @@ import { Input } from "@/components/ui/input";
 import { hashPassword } from "../lib/utils/hashing";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-
-const initialState = {
-  name: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-  restaurantName: "",
-  city: "",
-  address: "",
-  contactNumber: "",
-};
+import { fields, initialState } from "../lib/utils/signup";
 
 const reducer = (state, action) => {
   return { ...state, [action.field]: action.value };
 };
-
-const fields = [
-  {
-    name: "name",
-    type: "text",
-    label: "Name",
-    placeholder: "Enter your name",
-  },
-  {
-    name: "email",
-    type: "email",
-    label: "Email",
-    placeholder: "Enter your email",
-  },
-  {
-    name: "password",
-    type: "password",
-    label: "Password",
-    placeholder: "Enter your password",
-  },
-  {
-    name: "confirmPassword",
-    type: "password",
-    label: "Confirm Password",
-    placeholder: "Re-enter your password",
-  },
-  {
-    name: "restaurantName",
-    type: "text",
-    label: "Restaurant Name",
-    placeholder: "Enter restaurant name",
-  },
-  { name: "city", type: "text", label: "City", placeholder: "Enter city name" },
-  {
-    name: "address",
-    type: "text",
-    label: "Full Address",
-    placeholder: "Enter full address",
-  },
-  {
-    name: "contactNumber",
-    type: "number",
-    label: "Contact Number",
-    placeholder: "Enter contact number",
-  },
-];
 
 const RestaurantSignUp = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -116,9 +60,13 @@ const RestaurantSignUp = () => {
         });
 
         if (!response.ok) {
+          setShowAlertMessage({
+            type: "error",
+            title: "ERROR OCCURRED",
+            message: `HTTP error! Status: ${response.status}`,
+          });
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
         const responseData = await response.json();
         console.log("Response Data is:", responseData);
         console.log("Form submitted successfully:", state);
@@ -128,11 +76,9 @@ const RestaurantSignUp = () => {
           title: "REGISTRATION SUCCESSFULL",
           message: "Registration Successfull. You can login now.",
         });
-        // toast({
-        //   title: "Success",
-        //   description: "Registration successful!",
-        //   variant: "default",
-        // });
+        setTimeout(() => {
+          setShowAlertMessage(null);
+        }, 5000);
       } catch (error) {
         console.error("Error submitting form:", error.message);
         setRegisterLoading(false);
@@ -141,11 +87,9 @@ const RestaurantSignUp = () => {
           title: "REGISTRATION FAILED",
           message: error.message,
         });
-        // toast({
-        //   title: "Error",
-        //   description: error.message || "Something went wrong.",
-        //   variant: "destructive",
-        // });
+        setTimeout(() => {
+          setShowAlertMessage(null);
+        }, 5000);
       }
     }
   };
